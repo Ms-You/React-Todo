@@ -1,7 +1,12 @@
 package com.list.todo.service;
 
+import com.list.todo.common.ErrorCode;
+import com.list.todo.common.GlobalException;
+import com.list.todo.config.jwt.SecurityUtil;
+import com.list.todo.domain.Member;
 import com.list.todo.domain.Todo;
 import com.list.todo.domain.dto.TodoDTO;
+import com.list.todo.repository.MemberRepository;
 import com.list.todo.repository.TodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +21,7 @@ import java.util.stream.Collectors;
 @Service
 public class TodoService {
     private final TodoRepository todoRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public List<TodoDTO.TodoResp> create(final TodoDTO.TodoReq todoReq) {
@@ -27,15 +33,11 @@ public class TodoService {
                 .done(todoReq.isDone())
                 .build();
 
-        /*
-            Member 조회
-            member.addTodo(todo);
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(
+                () -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND)
+        );
 
-            if (todoReq.get() == null) {
-                log.warn("Unknown User.");
-                throw new RuntimeException("Unknown User.");
-            }
-        */
+        member.addTodo(todo);
 
         todoRepository.save(todo);
 
@@ -46,15 +48,16 @@ public class TodoService {
                 .collect(Collectors.toList());
     }
 
-//    @Transactional(readOnly = true)
-//    public List<TodoDTO.TodoResp> retrieve() {
-//        // Member 조회
-//        // member로 todo 목록 조회
-//
-//        return todoList.stream()
-//                .map(TodoDTO.TodoResp::entityToResp)
-//                .collect(Collectors.toList());
-//    }
+    @Transactional(readOnly = true)
+    public List<TodoDTO.TodoResp> retrieve() {
+        Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(
+                () -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND)
+        );
+
+        return member.getTodoList().stream()
+                .map(TodoDTO.TodoResp::entityToResp)
+                .collect(Collectors.toList());
+    }
 
     @Transactional
     public void update(Long id, TodoDTO.TodoReq todoReq) {

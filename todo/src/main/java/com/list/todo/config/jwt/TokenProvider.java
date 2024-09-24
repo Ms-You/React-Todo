@@ -29,7 +29,9 @@ public class TokenProvider {
     private final Key key;
 
     public TokenProvider(@Value("${jwt.secret}") String secretKey) {
+        // 주입받은 비밀 키를 BASE64 URL 형식으로 디코딩함
         byte[] keyBytes = Decoders.BASE64URL.decode(secretKey);
+        // 디코딩된 키를 사용하여 HMAC-SHA 알고리즘을 위한 Key 객체를 생성함
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 

@@ -1,18 +1,19 @@
 package com.list.todo.config.global;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class ResponseDTO<T> {
-    private String error;
+    private int code;
     private String message;
-    private List<T> data;
+    private T result;
+
+    public ResponseDTO(int code, String message) {
+        this.code = code;
+        this.message = message;
+    }
 }

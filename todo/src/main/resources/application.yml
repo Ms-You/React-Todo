@@ -24,4 +24,4 @@ spring:
     show-sql: true
 
 jwt:
-  secret: dksD3kfqkskDjaht1mzlDh7Dpsx5jfxpdlsjf
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
