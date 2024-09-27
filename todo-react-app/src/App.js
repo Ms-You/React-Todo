@@ -1,16 +1,21 @@
-// 함수형 컴포넌트
 import './App.css';
-import Todo from './Todo';
+import Todo from './todo/Todo';
+import AddTodo from './todo/AddTodo';
 import { Paper, List } from "@material-ui/core";
+import { useState } from 'react';
 
-function App() {
-  const items = [
-    { id: 0, title: 'Hello world 1', done: true },
-    { id: 1, title: 'Hello world 2', done: false },
-  ];
+const App = () => {
+  const [items, setItems] = useState([]);
+
+  const addItem = (newItem) => {
+    newItem.id = "ID-" + items.length;
+    newItem.done = false;
+    setItems([ ...items, newItem ]);
+  }
 
   return (
     <div className="App">
+      <AddTodo addItem={addItem} />
       {items.length > 0 && (
         <Paper style={{ margin: 16 }}>
           <List>
@@ -25,27 +30,3 @@ function App() {
 }
 
 export default App;
-
-// 클래스형 컴포넌트
-// import './App.css';
-// import Todo from './Todo';
-// import React from 'react';
-
-// class App extends React.Component {
-//   constructor(props) {
-//     super(props);
-//     this.state = {
-//       item: { id: 0, title: "Hello, world!", done: false },
-//     };
-//   }
-
-//   render() {
-//     return (
-//       <div className="App">
-//         <Todo item={this.state.item} />
-//       </div>
-//     )
-//   }
-// }
-
-// export default App;
