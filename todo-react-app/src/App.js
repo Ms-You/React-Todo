@@ -20,6 +20,14 @@ const App = () => {
     console.log("Update Items: ", items);
   }
 
+  const updateItem = (updateItem) => {
+    const newItems = items.map(item => 
+      item.id === updateItem.id ? updateItem : item
+    );
+
+    setItems(newItems);
+  }
+
   return (
     <div className="App">
       <AddTodo addItem={addItem} />
@@ -27,7 +35,12 @@ const App = () => {
         <Paper style={{ margin: 16 }}>
           <List>
             {items.map(item => (
-              <Todo key={item.id} item={item} deleteItem={deleteItem} />
+              <Todo 
+                key={item.id} 
+                item={item} 
+                deleteItem={deleteItem} 
+                updateItem={updateItem}
+              />
             ))}
           </List>
         </Paper>
