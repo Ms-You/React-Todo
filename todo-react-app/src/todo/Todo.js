@@ -1,9 +1,14 @@
-import { ListItem, ListItemText, InputBase, Checkbox } from "@material-ui/core";
+import { ListItem, ListItemText, InputBase, Checkbox, ListItemSecondaryAction, IconButton } from "@material-ui/core";
+import { DeleteOutlined } from "@material-ui/icons";
 
-const Todo = ({ item }) => {
+const Todo = ({ item, deleteItem }) => {
+  const deleteButtonClick = () => {
+    deleteItem(item);
+  }
+
   return (
     <ListItem>
-      <Checkbox checked={item.done} />
+      <Checkbox checked={item.done} disableRipple />
       <ListItemText>
         <InputBase 
           inputProps={{ "aria-label": "naked" }}
@@ -15,6 +20,15 @@ const Todo = ({ item }) => {
           fullWidth={true}
         />
       </ListItemText>
+
+      <ListItemSecondaryAction>
+        <IconButton 
+          aria-label="Delete Todo"
+          onClick={deleteButtonClick}
+        >
+          <DeleteOutlined />
+        </IconButton>
+      </ListItemSecondaryAction>
     </ListItem>
   );
 }

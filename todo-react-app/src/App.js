@@ -13,6 +13,13 @@ const App = () => {
     setItems([ ...items, newItem ]);
   }
 
+  const deleteItem = (item) => {
+    const newItems = items.filter(i => i.id !== item.id);
+
+    setItems(newItems);
+    console.log("Update Items: ", items);
+  }
+
   return (
     <div className="App">
       <AddTodo addItem={addItem} />
@@ -20,7 +27,7 @@ const App = () => {
         <Paper style={{ margin: 16 }}>
           <List>
             {items.map(item => (
-              <Todo key={item.id} item={item} />
+              <Todo key={item.id} item={item} deleteItem={deleteItem} />
             ))}
           </List>
         </Paper>
