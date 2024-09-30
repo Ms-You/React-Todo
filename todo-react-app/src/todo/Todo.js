@@ -5,6 +5,7 @@ import { useState } from "react";
 const Todo = ({ item, deleteItem, updateItem }) => {
   const [title, setTitle] = useState(item.title);
   const [readOnly, setReadOnly] = useState(true);
+  const [done, setDone] = useState(item.done);
 
   const deleteButtonClick = () => {
     deleteItem(item);
@@ -25,19 +26,18 @@ const Todo = ({ item, deleteItem, updateItem }) => {
   const editEventHandler = (e) => {
     setTitle(e.target.value);
     console.log(title);
-    
   }
 
-  const checkboxEventHandler = (e) => {
-    updateItem({ ...item, done: !item.done })
-    console.log(!item.done);
-    
+  const checkboxEventHandler = async (e) => {
+    const updatedItem = { ...item, done: !done };
+    setDone(updatedItem.done);
+    await updateItem(updatedItem);
   }
 
   return (
     <ListItem>
       <Checkbox 
-        checked={item.done} 
+        checked={done} 
         onChange={checkboxEventHandler} 
       />
       <ListItemText>
@@ -49,8 +49,8 @@ const Todo = ({ item, deleteItem, updateItem }) => {
           onClick={offReadOnlyMode}
           onChange={editEventHandler}
           type="text"
-          id={item.id}
-          name={item.id}
+          id={item.id.toString()}
+          name={item.id.toString()}
           value={title}
           multiline={true}
           fullWidth={true}
