@@ -49,6 +49,10 @@ public class SecurityConfig {
                 ).exceptionHandling(exceptionHandling -> exceptionHandling
                         .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                         .accessDeniedHandler(jwtAccessDeniedHandler)
+                ).headers(headers ->
+                        headers.frameOptions(frameOptionsConfig ->
+                                frameOptionsConfig.sameOrigin()
+                        )
                 ).addFilterBefore(new JwtAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
