@@ -62,9 +62,15 @@ const Todo = ({ item, deleteItem, updateItem }) => {
           multiline={true}
           fullWidth={true}
           onKeyDown={enterKeyEventHandler}
+          style={{ textDecoration: done ? 'line-through' : 'none' }}
         />
-        <Collapse in={showDescription} timeout="auto" unmountOnExit>
-          <Typography variant="body2" style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+        <Collapse 
+          in={showDescription} 
+          timeout="auto" 
+          unmountOnExit 
+          style={{ textDecoration: done ? 'line-through' : 'none' }}
+        >
+          <Typography style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
             {item.description} {/* 설명을 보여주는 부분 */}
           </Typography>
         </Collapse>

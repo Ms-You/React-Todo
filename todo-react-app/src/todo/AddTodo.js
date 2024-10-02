@@ -46,7 +46,6 @@ const AddTodo = ({ addItem }) => {
             onChange={onInputChange}
             onKeyDown={enterKeyEventHandler}
             value={item.description}
-            multiline
           />
         </Grid>
         
