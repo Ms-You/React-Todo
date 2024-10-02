@@ -1,4 +1,4 @@
-import { ListItem, ListItemText, InputBase, Checkbox, ListItemSecondaryAction, IconButton } from "@material-ui/core";
+import { ListItem, ListItemText, InputBase, Checkbox, ListItemSecondaryAction, IconButton, Collapse, Typography } from "@material-ui/core";
 import { DeleteOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
@@ -6,6 +6,12 @@ const Todo = ({ item, deleteItem, updateItem }) => {
   const [title, setTitle] = useState(item.title);
   const [readOnly, setReadOnly] = useState(true);
   const [done, setDone] = useState(item.done);
+  const [showDescription, setShowDescription] = useState(false);
+
+  const toggleDescription = () => {
+    setShowDescription(!showDescription);
+    offReadOnlyMode();
+  }
 
   const deleteButtonClick = () => {
     deleteItem(item);
@@ -46,7 +52,8 @@ const Todo = ({ item, deleteItem, updateItem }) => {
             "aria-label": "naked",
             readOnly: readOnly,
           }}
-          onClick={offReadOnlyMode}
+          // onClick={offReadOnlyMode}
+          onClick={toggleDescription}
           onChange={editEventHandler}
           type="text"
           id={item.id.toString()}
@@ -56,6 +63,11 @@ const Todo = ({ item, deleteItem, updateItem }) => {
           fullWidth={true}
           onKeyDown={enterKeyEventHandler}
         />
+        <Collapse in={showDescription} timeout="auto" unmountOnExit>
+          <Typography variant="body2" style={{ padding: '8px 16px', backgroundColor: '#f0f0f0', borderRadius: '4px' }}>
+            {item.description} {/* 설명을 보여주는 부분 */}
+          </Typography>
+        </Collapse>
       </ListItemText>
 
       <ListItemSecondaryAction>
