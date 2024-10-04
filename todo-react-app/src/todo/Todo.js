@@ -2,7 +2,7 @@ import { ListItem, ListItemText, InputBase, Checkbox, ListItemSecondaryAction, I
 import { DeleteOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
-const Todo = ({ item, deleteItem, updateItem }) => {
+const Todo = ({ item, selectedItems, deleteItem, updateItem, toggleItemSelection }) => {
   const [title, setTitle] = useState(item.title);
   const [description, setDescription] = useState(item.description);
   const [readOnly, setReadOnly] = useState(true);
@@ -49,12 +49,13 @@ const Todo = ({ item, deleteItem, updateItem }) => {
     const updatedItem = { ...item, done: !done };
     setDone(updatedItem.done);
     await updateItem(updatedItem);
+    toggleItemSelection(item.id);
   }
 
   return (
     <ListItem>
       <Checkbox 
-        checked={done} 
+        checked={selectedItems.includes(item.id)} 
         onChange={checkboxEventHandler} 
       />
       <ListItemText>
@@ -72,7 +73,7 @@ const Todo = ({ item, deleteItem, updateItem }) => {
           multiline={false}
           fullWidth={true}
           onKeyDown={enterKeyEventHandler}
-          style={{ textDecoration: done ? 'line-through' : 'none' }}
+          style={{ textDecoration: done ? 'line-through' : 'none', fontWeight: 'bold' }}
         />
         <Divider style={{ margin: '8px 0' }} />
         {description && (
