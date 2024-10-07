@@ -1,11 +1,15 @@
 import './App.css';
 import Todo from './todo/Todo';
 import AddTodo from './todo/AddTodo';
+import SignUp from './sign/sign-up/SignUp';
+import SignIn from './sign/sign-in/SignIn';
+import BottomNavBar from './nav/BottomNavBar';
 import { Paper, List, Button } from "@material-ui/core";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import { useEffect, useState } from 'react';
 import { call } from './service/ApiService';
+import { Routes, Route } from 'react-router-dom';
 
 const App = () => {
   const [items, setItems] = useState([]);
@@ -97,40 +101,51 @@ const App = () => {
   }
 
   return (
-    <div className="App">
-      <AddTodo addItem={addItem} />
-      {items.length > 0 && (
-        <Paper style={{ margin: 16 }}>
-          <List>
-            {items.map(item => (
-              <Todo 
-                key={item.id} 
-                item={item}
-                selectedItems={selectedItems}
-                deleteItem={deleteItem} 
-                updateItem={updateItem}
-                toggleItemSelection={toggleItemSelection}
-              />
-            ))}
-          </List>
-        </Paper>
-      )}
-      <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', margin: '16px 0'}}>
-        <Button 
-          variant="outlined" 
-          startIcon={<CheckIcon />}
-          onClick={toggleAllItems}
-        >
-          전체 선택/해제
-        </Button>
-        <Button 
-          variant="outlined" 
-          endIcon={<DeleteIcon />}
-          onClick={deleteSelectedItems}
-        >
-          선택된 항목 삭제
-        </Button>
-      </div>
+    <div className="App" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Routes>
+        <Route path='/sign-up' element={<SignUp />} />
+        <Route path='/sign-in' element={<SignIn />} />
+        <Route path='/' element={
+          <>
+          <AddTodo addItem={addItem} />
+          {items.length > 0 && (
+            <Paper style={{ margin: 16 }}>
+              <List>
+                {items.map(item => (
+                  <Todo 
+                    key={item.id} 
+                    item={item}
+                    selectedItems={selectedItems}
+                    deleteItem={deleteItem} 
+                    updateItem={updateItem}
+                    toggleItemSelection={toggleItemSelection}
+                  />
+                ))}
+              </List>
+            </Paper>
+          )}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', margin: '16px 0'}}>
+            <Button 
+              variant="outlined" 
+              startIcon={<CheckIcon />}
+              onClick={toggleAllItems}
+            >
+              전체 선택/해제
+            </Button>
+            <Button 
+              variant="outlined" 
+              endIcon={<DeleteIcon />}
+              onClick={deleteSelectedItems}
+            >
+              선택된 항목 삭제
+            </Button>
+          </div>
+          <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '3rem' }}>
+            <BottomNavBar />
+          </div>
+          </>
+        } />
+      </Routes>
     </div>
   );
 }
