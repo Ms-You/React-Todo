@@ -2,12 +2,13 @@ import { TextField, Paper, Button, Grid } from "@material-ui/core";
 import { useState } from "react";
 
 // addItem 함수를 App.js 컴포넌트에서 전달 받음
-const AddTodo = ({addItem}) => {
-  const [item, setItem] = useState({ title: "" });
+const AddTodo = ({ addItem }) => {
+  const [item, setItem] = useState({ title: "", description: "" });
 
   // 새로운 아이템을 입력 받는 함수
   const onInputChange = (e) => {
-    const newItem = { ...item, title: e.target.value };
+    const { name, value } = e.target;
+    const newItem = { ...item, [name]: value };
     setItem(newItem);
     console.log(newItem);
   }
@@ -15,7 +16,7 @@ const AddTodo = ({addItem}) => {
   // 아이템을 추가하는 함수
   const onButtonClick = () => {
     addItem(item);
-    setItem({ title: "" });
+    setItem({ title: "", description: "" });
   }
 
   // Enter로 아이템을 추가하는 함수
@@ -27,17 +28,28 @@ const AddTodo = ({addItem}) => {
 
   return (
     <Paper style={{ margin: 16, padding: 16 }}>
-      <Grid container>
-        <Grid xs={11} md={11} item style={{ paddingRight: 16 }}>
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
           <TextField 
-            placeholder="Add Todo Here" 
+            placeholder="Add Title here" 
             fullWidth
+            name="title"
             onChange={onInputChange}
-            onKeyDown={enterKeyEventHandler}
             value={item.title}
           />
         </Grid>
-        <Grid xs={1} md={1} item>
+        <Grid item xs={12}>
+          <TextField 
+            placeholder="Add Description here"
+            fullWidth
+            name="description"
+            onChange={onInputChange}
+            onKeyDown={enterKeyEventHandler}
+            value={item.description}
+          />
+        </Grid>
+        
+        <Grid item xs={12}>
           <Button 
             fullWidth 
             color="secondary" 
