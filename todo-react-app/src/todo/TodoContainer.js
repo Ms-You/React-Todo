@@ -1,6 +1,5 @@
 import Todo from './Todo';
 import AddTodo from './AddTodo';
-import BottomNavBar from '../nav/BottomNavBar';
 import { Paper, List, Button } from "@material-ui/core";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
@@ -97,7 +96,7 @@ const TodoContainer = () => {
   }
 
   return (
-    <div className="TodoContainer" style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
       <AddTodo addItem={addItem} />
       {items.length > 0 && (
         <Paper style={{ margin: 16 }}>
@@ -130,9 +129,6 @@ const TodoContainer = () => {
         >
           선택된 항목 삭제
         </Button>
-      </div>
-      <div style={{ marginTop: 'auto', display: 'flex', justifyContent: 'center', alignItems: 'center', marginBottom: '3rem' }}>
-        <BottomNavBar />
       </div>
     </div>
   );
