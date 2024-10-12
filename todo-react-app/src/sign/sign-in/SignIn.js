@@ -16,6 +16,9 @@ import ForgotPassword from './ForgotPassword';
 import { SitemarkIcon } from './CustomIcons';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
+import { call } from '../../service/ApiService';
+import { saveToken } from '../../service/localStorageUtils';
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -65,6 +68,12 @@ export default function SignIn(props) {
   const [passwordError, setPasswordError] = React.useState(false);
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [open, setOpen] = React.useState(false);
+  const [loginReq, setLoginReq] = React.useState({
+    email: '',
+    password: '',
+  });
+
+  const navigate = useNavigate();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -72,18 +81,6 @@ export default function SignIn(props) {
 
   const handleClose = () => {
     setOpen(false);
-  };
-
-  const handleSubmit = (event) => {
-    if (emailError || passwordError) {
-      event.preventDefault();
-      return;
-    }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
   };
 
   const validateInputs = () => {
@@ -111,6 +108,41 @@ export default function SignIn(props) {
     }
 
     return isValid;
+  };
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setLoginReq({
+      ...loginReq,
+      [name]: value,
+    });
+  }
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
+
+    try {
+      const responseData = await call('/sign-in', 'POST', loginReq);
+
+      const bearerToken = responseData.response.headers.get('Authorization');
+      const accessToken = bearerToken ? bearerToken.split(' ')[1] : null;
+      
+      if (accessToken) {
+        saveToken(accessToken);
+        window.alert(responseData.data.message);
+        navigate('/');
+      } else {
+        window.alert('토큰을 받을 수 없습니다.');
+      }
+
+    } catch (error) {
+      console.log('Error occured when you login: ', error);
+      window.alert(error.message);
+    }
   };
 
   return (
@@ -141,6 +173,7 @@ export default function SignIn(props) {
             <FormControl>
               <FormLabel htmlFor="email">Email</FormLabel>
               <TextField
+                onChange={handleChange}
                 error={emailError}
                 helperText={emailErrorMessage}
                 id="email"
@@ -170,6 +203,7 @@ export default function SignIn(props) {
                 </Link>
               </Box>
               <TextField
+                onChange={handleChange}
                 error={passwordError}
                 helperText={passwordErrorMessage}
                 name="password"

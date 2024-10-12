@@ -37,7 +37,7 @@ function AppTheme({ children, disableCustomTheme, themeComponents }) {
     return <React.Fragment>{children}</React.Fragment>;
   }
   return (
-    <ThemeProvider theme={theme} disableTransitionOnChange>
+    <ThemeProvider theme={theme}>
       {children}
     </ThemeProvider>
   );
