@@ -137,8 +137,8 @@ export default function SignUp() {
 
     try {
       const responseData = await call('/sign-up', 'POST', joinReq);
-
-      window.alert(responseData.message);
+      
+      window.alert(responseData.data.message);
       navigate('/sign-in');
       
     } catch (error) {

@@ -3,10 +3,10 @@ import { DeleteOutlined } from "@material-ui/icons";
 import { useState } from "react";
 
 const Todo = ({ item, selectedItems, deleteItem, updateItem, toggleItemSelection }) => {
-  const [title, setTitle] = useState(item.title);
-  const [description, setDescription] = useState(item.description);
+  const [title, setTitle] = useState(item?.title || '');
+  const [description, setDescription] = useState(item?.description || '');
   const [readOnly, setReadOnly] = useState(true);
-  const [done, setDone] = useState(item.done);
+  const [done, setDone] = useState(item?.done || false);
   const [showDescription, setShowDescription] = useState(false);
 
   const toggleDescription = () => {
