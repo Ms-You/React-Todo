@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
     private final MemberService memberService;
 
-    @PostMapping("/auth")
+    @PostMapping("/sign-up")
     public ResponseEntity join(@RequestBody MemberDTO.JoinReq joinReq) {
         memberService.join(joinReq);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "회원가입 되었습니다."));
     }
 
-    @PostMapping("/login")
+    @PostMapping("/sign-in")
     public ResponseEntity login(@RequestBody MemberDTO.LoginReq loginReq, HttpServletRequest request, HttpServletResponse response) {
         TokenDTO tokenDTO = memberService.login(loginReq);
 

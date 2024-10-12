@@ -19,7 +19,7 @@ public class Member {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String nickname;
 
     @Column(nullable = false)
     private String email;
@@ -34,9 +34,9 @@ public class Member {
     private List<Todo> todoList = new ArrayList<>();
 
     @Builder
-    public Member(Long id, String username, String email, String password, RoleType role) {
+    public Member(Long id, String nickname, String email, String password, RoleType role) {
         this.id = id;
-        this.username = username;
+        this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.role = role;
