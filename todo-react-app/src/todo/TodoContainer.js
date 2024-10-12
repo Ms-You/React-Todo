@@ -18,7 +18,9 @@ const TodoContainer = () => {
   const fetchTodos = async () => {
     try {
       const todos = await call('/todo', 'GET');
-      setItems(todos.result);
+      
+      setItems(todos.data.result);
+      
     } catch (error) {
       console.log('Error fetching todos: ', error);
     }
@@ -38,13 +40,12 @@ const TodoContainer = () => {
   }
 
   const addItem = async (newItem) => {
-    newItem.id = "ID-" + items.length;
     newItem.done = false;
 
     try {
       const addedItem = await call('/todo', 'POST', newItem);
       
-      setItems([...items, addedItem.result]);
+      setItems([...items, addedItem.data.result]);
     } catch (error) {
       console.log('Error adding new todo', error);
     }
@@ -86,7 +87,7 @@ const TodoContainer = () => {
       const updatedResponse = await call(`/todo/${updateItem.id}`, 'PUT', updateItem);
       
       const newItems = items.map(item => 
-        item.id === updatedResponse.result.id ? updatedResponse.result : item
+        item.id === updatedResponse.data.result.id ? updatedResponse.data.result : item
       );
   
       setItems(newItems);
@@ -103,7 +104,7 @@ const TodoContainer = () => {
           <List>
             {items.map(item => (
               <Todo 
-                key={item.id} 
+                key={item.id}
                 item={item}
                 selectedItems={selectedItems}
                 deleteItem={deleteItem} 

@@ -15,12 +15,12 @@ export function call(api, method, request) {
 
   return fetch(options.url, options)
     .then((response) => {
-      return response.json().then((json) => {
+      return response.json().then((data) => {
         if (!response.ok) {
-          return Promise.reject(json);
+          return Promise.reject(data);
         }
 
-        return json;
+        return { data, response };
       });
   })
   .catch((error) => {

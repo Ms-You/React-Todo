@@ -48,7 +48,7 @@ public class TokenProvider {
                 .setIssuer("todo app")
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + ACCESS_TOKEN_EXPIRES_IN))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         String refreshToken = Jwts.builder()
@@ -57,7 +57,7 @@ public class TokenProvider {
                 .setIssuer("todo app")
                 .setIssuedAt(new Date(now))
                 .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRES_IN))
-                .signWith(key, SignatureAlgorithm.HS512)
+                .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return new TokenDTO(accessToken, refreshToken);

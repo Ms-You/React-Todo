@@ -12,6 +12,8 @@ import MuiCard from '@mui/material/Card';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import getSignUpTheme from './theme/getSignUpTheme';
 import { SitemarkIcon } from './CustomIcons';
+import { call } from '../../service/ApiService';
+import { useNavigate } from 'react-router-dom';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -58,12 +60,20 @@ export default function SignUp() {
   const [passwordErrorMessage, setPasswordErrorMessage] = React.useState('');
   const [passwordConfirmError, setPasswordConfirmError] = React.useState(false);
   const [passwordConfirmErrorMessage, setPasswordConfirmErrorMessage] = React.useState('');
+  const [joinReq, setJoinReq] = React.useState({
+    nickname: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+  });
+
+  const navigate = useNavigate();
   
   const validateInputs = () => {
     const email = document.getElementById('email');
     const password = document.getElementById('password');
-    const passwordConfirm = document.getElementById('password-confirm');
-    const name = document.getElementById('name');
+    const passwordConfirm = document.getElementById('passwordConfirm');
+    const name = document.getElementById('nickname');
 
     let isValid = true;
 
@@ -110,19 +120,31 @@ export default function SignUp() {
     return isValid;
   };
 
-  const handleSubmit = (event) => {
-    if (nameError || emailError || passwordError || passwordConfirmError) {
-      event.preventDefault();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setJoinReq({
+      ...joinReq, 
+      [name]: value,
+    });
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) {
       return;
     }
-    const data = new FormData(event.currentTarget);
-    console.log({
-      name: data.get('name'),
-      lastName: data.get('lastName'),
-      email: data.get('email'),
-      password: data.get('password'),
-      passwordConfirm: data.get('passwordConfirm'),
-    });
+
+    try {
+      const responseData = await call('/sign-up', 'POST', joinReq);
+      
+      window.alert(responseData.data.message);
+      navigate('/sign-in');
+      
+    } catch (error) {
+      console.log('Error occured when you sign up: ', error);
+      window.alert(error.message);
+    }
   };
 
   return (
@@ -144,14 +166,15 @@ export default function SignUp() {
               sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
             >
               <FormControl>
-                <FormLabel htmlFor="name">nick name</FormLabel>
+                <FormLabel htmlFor="nickname">nick name</FormLabel>
                 <TextField
-                  autoComplete="name"
-                  name="name"
+                  autoComplete="nickname"
+                  name="nickname"
                   required
                   fullWidth
-                  id="name"
+                  id="nickname"
                   placeholder="John Doe"
+                  onChange={handleChange}
                   error={nameError}
                   helperText={nameErrorMessage}
                   color={nameError ? 'error' : 'primary'}
@@ -167,9 +190,10 @@ export default function SignUp() {
                   name="email"
                   autoComplete="email"
                   variant="outlined"
+                  onChange={handleChange}
                   error={emailError}
                   helperText={emailErrorMessage}
-                  color={passwordError ? 'error' : 'primary'}
+                  color={emailError ? 'error' : 'primary'}
                 />
               </FormControl>
               <FormControl>
@@ -183,6 +207,7 @@ export default function SignUp() {
                   id="password"
                   autoComplete="new-password"
                   variant="outlined"
+                  onChange={handleChange}
                   error={passwordError}
                   helperText={passwordErrorMessage}
                   color={passwordError ? 'error' : 'primary'}
@@ -193,12 +218,13 @@ export default function SignUp() {
                 <TextField
                   required
                   fullWidth
-                  name="password-confirm"
+                  name="passwordConfirm"
                   placeholder="••••••"
                   type="password"
-                  id="password-confirm"
+                  id="passwordConfirm"
                   autoComplete="new-password-confirm"
                   variant="outlined"
+                  onChange={handleChange}
                   error={passwordConfirmError}
                   helperText={passwordConfirmErrorMessage}
                   color={passwordConfirmError ? 'error' : 'primary'}
@@ -208,7 +234,6 @@ export default function SignUp() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                onClick={validateInputs}
               >
                 Sign up
               </Button>

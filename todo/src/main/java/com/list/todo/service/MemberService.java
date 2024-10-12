@@ -9,6 +9,7 @@ import com.list.todo.domain.RoleType;
 import com.list.todo.domain.dto.MemberDTO;
 import com.list.todo.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class MemberService {
@@ -30,14 +32,22 @@ public class MemberService {
             throw new GlobalException(ErrorCode.EMAIL_ALREADY_EXISTS);
         }
 
+        checkPasswordConfirm(joinReq.getPassword(), joinReq.getPasswordConfirm());
+
         Member member = Member.builder()
-                .username(joinReq.getUsername())
+                .nickname(joinReq.getNickname())
                 .email(joinReq.getEmail())
                 .password(passwordEncoder.encode(joinReq.getPassword()))
                 .role(RoleType.ROLE_USER)
                 .build();
 
         memberRepository.save(member);
+    }
+
+    private void checkPasswordConfirm(String password, String passwordConfirm) {
+        if (!password.equals(passwordConfirm)) {
+            throw new GlobalException(ErrorCode.PASSWORD_NOT_MATCHED);
+        }
     }
 
     @Transactional

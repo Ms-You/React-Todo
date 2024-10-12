@@ -7,9 +7,10 @@ public class MemberDTO {
     @Getter
     @NoArgsConstructor
     public static class JoinReq {
-        private String username;
+        private String nickname;
         private String email;
         private String password;
+        private String passwordConfirm;
     }
 
     @Getter
