@@ -12,8 +12,8 @@ import MuiCard from '@mui/material/Card';
 import { createTheme, ThemeProvider, styled } from '@mui/material/styles';
 import getSignUpTheme from './theme/getSignUpTheme';
 import { SitemarkIcon } from './CustomIcons';
-import { call } from '../../service/ApiService';
 import { useNavigate } from 'react-router-dom';
+import instance from '../../service/Interceptor';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -136,7 +136,7 @@ export default function SignUp() {
     }
 
     try {
-      const responseData = await call('/sign-up', 'POST', joinReq);
+      const responseData = await instance.post('/sign-up', joinReq);
       
       window.alert(responseData.data.message);
       navigate('/sign-in');

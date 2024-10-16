@@ -16,9 +16,8 @@ import ForgotPassword from './ForgotPassword';
 import { SitemarkIcon } from './CustomIcons';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
-import { call } from '../../service/ApiService';
-import { saveToken } from '../../service/localStorageUtils';
 import { useNavigate } from 'react-router-dom';
+import instance from '../../service/Interceptor';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -126,13 +125,13 @@ export default function SignIn(props) {
     }
 
     try {
-      const responseData = await call('/sign-in', 'POST', loginReq);
+      const responseData = await instance.post('/sign-in', loginReq);
 
-      const bearerToken = responseData.response.headers.get('Authorization');
+      const bearerToken = responseData.headers.get('Authorization');
       const accessToken = bearerToken ? bearerToken.split(' ')[1] : null;
       
       if (accessToken) {
-        saveToken(accessToken);
+        localStorage.setItem('accessToken', accessToken);
         window.alert(responseData.data.message);
         navigate('/');
       } else {
@@ -211,7 +210,6 @@ export default function SignIn(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"

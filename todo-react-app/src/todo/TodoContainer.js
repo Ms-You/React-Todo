@@ -4,7 +4,7 @@ import { Paper, List, Button } from "@material-ui/core";
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckIcon from '@mui/icons-material/Check';
 import { useEffect, useState } from 'react';
-import { call } from '../service/ApiService';
+import instance from '../service/Interceptor';
 
 const TodoContainer = () => {
   const [items, setItems] = useState([]);
@@ -17,12 +17,11 @@ const TodoContainer = () => {
 
   const fetchTodos = async () => {
     try {
-      const todos = await call('/todo', 'GET');
-      
+      const todos = await instance.get('/todo');
       setItems(todos.data.result);
-      
     } catch (error) {
       console.log('Error fetching todos: ', error);
+      window.alert('Todo 목록을 가져오는 데 실패했습니다.');
     }
   }
 
@@ -43,7 +42,7 @@ const TodoContainer = () => {
     newItem.done = false;
 
     try {
-      const addedItem = await call('/todo', 'POST', newItem);
+      const addedItem = await instance.post('/todo', newItem);
       
       setItems([...items, addedItem.data.result]);
     } catch (error) {
@@ -53,7 +52,7 @@ const TodoContainer = () => {
 
   const deleteItem = async (item) => {
     try {
-      await call(`/todo/${item.id}`, 'DELETE');
+      await instance.delete(`/todo/${item.id}`);
       const itemsWithoutDeletedItem = items.filter(i => i.id !== item.id);
 
       setItems(itemsWithoutDeletedItem);
@@ -66,7 +65,7 @@ const TodoContainer = () => {
 
   const deleteSelectedItems = async () => {
     try {
-      await Promise.all(selectedItems.map(id => call(`/todo/${id}`, 'DELETE')));
+      await Promise.all(selectedItems.map(id => instance.delete(`/todo/${id}`)));
       setItems(items.filter(item => !selectedItems.includes(item.id)));
       setSelectedItems([]);
     } catch (error) {
@@ -84,7 +83,7 @@ const TodoContainer = () => {
 
   const updateItem = async (updateItem) => {
     try {
-      const updatedResponse = await call(`/todo/${updateItem.id}`, 'PUT', updateItem);
+      const updatedResponse = await instance.put(`/todo/${updateItem.id}`, updateItem);
       
       const newItems = items.map(item => 
         item.id === updatedResponse.data.result.id ? updatedResponse.data.result : item
