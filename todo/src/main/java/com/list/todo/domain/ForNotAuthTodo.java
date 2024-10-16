@@ -1,43 +1,31 @@
 package com.list.todo.domain;
 
-import com.list.todo.domain.dto.ForAuthTodoDTO;
-import jakarta.persistence.*;
+import com.list.todo.domain.dto.ForNotAuthTodoDTO;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "todo")
-@Entity
-public class Todo {
+public class ForNotAuthTodo {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "todo_id")
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
-    private Member member;
-
+    private UUID id;
     private String title;
     private String description;
     private boolean done;
 
     @Builder
-    public Todo(Long id, String title, String description, boolean done) {
+    public ForNotAuthTodo(UUID id, String title, String description, boolean done) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.done = done;
     }
 
-    public void updateWriter(Member member) {
-        this.member = member;
-    }
-
-    public void update(ForAuthTodoDTO.TodoReq todoReq) {
+    public void update(ForNotAuthTodoDTO.ForNotAuthTodoReq todoReq) {
         this.title = todoReq.getTitle();
         this.description = todoReq.getDescription();
         this.done = todoReq.isDone();

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-public class TodoDTO {
+public class ForAuthTodoDTO {
 
     @Getter
     @NoArgsConstructor

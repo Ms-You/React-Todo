@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface TodoRepository extends JpaRepository<Todo, Long> {
+public interface ForAuthTodoRepository extends JpaRepository<Todo, Long> {
     List<Todo> findByMember(Member member);
 }
