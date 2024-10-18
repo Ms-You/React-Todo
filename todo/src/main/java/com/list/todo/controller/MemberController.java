@@ -34,9 +34,9 @@ public class MemberController {
         TokenDTO tokenDTO = memberService.login(loginReq);
 
         ResponseCookie cookie = ResponseCookie.from("RefreshToken", tokenDTO.getRefreshToken())
-                .maxAge(60 * 60 * 24 * 7)
                 .path("/")
-                .httpOnly(true)
+                .maxAge(60 * 60 * 24 * 7)
+                .httpOnly(true) // 클라이언트의 JS를 통해 접근할 수 없음
                 .build();
 
         response.setHeader("Authorization", "Bearer " + tokenDTO.getAccessToken());
@@ -45,16 +45,25 @@ public class MemberController {
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "로그인 되었습니다."));
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity logout(@RequestHeader("Authorization") String accessToken) {
+    @PostMapping("/auth/logout")
+    public ResponseEntity logout(@RequestHeader("Authorization") String accessToken, HttpServletResponse response) {
         if (StringUtils.hasText(accessToken) && accessToken.startsWith("Bearer ")) {
             memberService.logout(accessToken.substring(7));
         }
 
+        // 클라이언트의 쿠키에 저장된 Refresh Token 삭제
+        ResponseCookie cookie = ResponseCookie.from("RefreshToken", "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .build();
+
+        response.setHeader("Set-Cookie", cookie.toString());
+
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "로그아웃 되었습니다."));
     }
 
-    @PostMapping("/reissue")
+    @PostMapping("/auth/reissue")
     public ResponseEntity reissueToken(HttpServletRequest request, HttpServletResponse response) {
         Cookie[] cookies = request.getCookies();
 
