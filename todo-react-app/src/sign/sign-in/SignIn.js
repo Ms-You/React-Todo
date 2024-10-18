@@ -75,7 +75,6 @@ export default function SignIn(props) {
   });
 
   const setIsAuth = useSetRecoilState(authState);
-
   const navigate = useNavigate();
 
   const handleClickOpen = () => {
