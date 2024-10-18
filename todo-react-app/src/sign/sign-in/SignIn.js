@@ -18,6 +18,8 @@ import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
 import { useNavigate } from 'react-router-dom';
 import instance from '../../service/Interceptor';
+import { authState } from '../../store/atom';
+import { useSetRecoilState } from 'recoil';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -71,6 +73,8 @@ export default function SignIn(props) {
     email: '',
     password: '',
   });
+
+  const setIsAuth = useSetRecoilState(authState);
 
   const navigate = useNavigate();
 
@@ -132,6 +136,7 @@ export default function SignIn(props) {
       
       if (accessToken) {
         localStorage.setItem('accessToken', accessToken);
+        setIsAuth({ isAuthenticated: true });
         window.alert(responseData.data.message);
         navigate('/');
       } else {
