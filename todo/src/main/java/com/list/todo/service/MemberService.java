@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,18 +58,24 @@ public class MemberService {
     @Transactional
     public TokenDTO login(MemberDTO.LoginReq loginReq) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginReq.getEmail(), loginReq.getPassword());
-        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        TokenDTO tokenDTO = tokenProvider.generate(authentication);
+        try {
+            // 인증 실패 시 AuthenticationException 예외 처리
+            Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        redisTemplate.opsForValue().set(
-                authentication.getName(),
-                tokenDTO.getRefreshToken(),
-                tokenProvider.getExpirationTime(tokenDTO.getRefreshToken()),
-                TimeUnit.MILLISECONDS
-        );
+            TokenDTO tokenDTO = tokenProvider.generate(authentication);
 
-        return tokenDTO;
+            redisTemplate.opsForValue().set(
+                    authentication.getName(),
+                    tokenDTO.getRefreshToken(),
+                    tokenProvider.getExpirationTime(tokenDTO.getRefreshToken()),
+                    TimeUnit.MILLISECONDS
+            );
+
+            return tokenDTO;
+        } catch (AuthenticationException e) {
+            throw new GlobalException(ErrorCode.ID_OR_PASSWORD_WRONG);
+        }
     }
 
     @Transactional
