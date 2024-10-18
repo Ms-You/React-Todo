@@ -145,7 +145,9 @@ export default function SignIn(props) {
 
     } catch (error) {
       console.log('Error occured when you login: ', error);
-      window.alert(error.message);
+      
+      const errorMessage = error.response?.data?.message || '존재하지 않는 회원 정보입니다.';
+      window.alert(errorMessage);
     }
   };
 
