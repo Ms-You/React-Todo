@@ -35,7 +35,7 @@ instance.interceptors.response.use(
       
       try {
         // RefreshToken으로 토큰 재발급 API 호출
-        const res = await axios.post('/reissue', {}, { withCredentials: true });
+        const res = await axios.post('/auth/reissue', {}, { withCredentials: true });
 
         // RefreshToken이 유효하지 않은 경우 로그아웃
         if (res.status === 403 || res.status === 700) {
