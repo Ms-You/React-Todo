@@ -5,9 +5,9 @@ import com.list.todo.common.GlobalException;
 import com.list.todo.config.jwt.SecurityUtil;
 import com.list.todo.domain.Member;
 import com.list.todo.domain.Todo;
-import com.list.todo.domain.dto.TodoDTO;
+import com.list.todo.domain.dto.ForAuthTodoDTO;
 import com.list.todo.repository.MemberRepository;
-import com.list.todo.repository.TodoRepository;
+import com.list.todo.repository.ForAuthTodoRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,12 +19,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TodoService {
-    private final TodoRepository todoRepository;
+public class ForAuthTodoService {
+    private final ForAuthTodoRepository forAuthTodoRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
-    public List<TodoDTO.TodoResp> create(final TodoDTO.TodoReq todoReq) {
+    public List<ForAuthTodoDTO.TodoResp> create(final ForAuthTodoDTO.TodoReq todoReq) {
         validate(todoReq);
 
         Todo todo = Todo.builder()
@@ -39,29 +39,29 @@ public class TodoService {
 
         member.addTodo(todo);
 
-        todoRepository.save(todo);
+        forAuthTodoRepository.save(todo);
 
         log.info("TodoEntity Id : {} is saved.", todo.getId());
 
-        return todoRepository.findByMember(todo.getMember()).stream()
-                .map(TodoDTO.TodoResp::entityToResp)
+        return forAuthTodoRepository.findByMember(todo.getMember()).stream()
+                .map(ForAuthTodoDTO.TodoResp::entityToResp)
                 .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
-    public List<TodoDTO.TodoResp> retrieve() {
+    public List<ForAuthTodoDTO.TodoResp> retrieve() {
         Member member = memberRepository.findByEmail(SecurityUtil.getCurrentMember()).orElseThrow(
                 () -> new GlobalException(ErrorCode.MEMBER_NOT_FOUND)
         );
 
         return member.getTodoList().stream()
-                .map(TodoDTO.TodoResp::entityToResp)
+                .map(ForAuthTodoDTO.TodoResp::entityToResp)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void update(Long id, TodoDTO.TodoReq todoReq) {
-        Todo todo = todoRepository.findById(id).orElseThrow(
+    public void update(Long id, ForAuthTodoDTO.TodoReq todoReq) {
+        Todo todo = forAuthTodoRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 항목이 존재하지 않습니다.")
         );
 
@@ -70,15 +70,15 @@ public class TodoService {
 
     @Transactional
     public void delete(Long id) {
-        Todo todo = todoRepository.findById(id).orElseThrow(
+        Todo todo = forAuthTodoRepository.findById(id).orElseThrow(
                 () -> new IllegalArgumentException("해당 항목이 존재하지 않습니다.")
         );
 
-        todoRepository.delete(todo);
+        forAuthTodoRepository.delete(todo);
     }
 
 
-    private void validate(final TodoDTO.TodoReq todoReq) {
+    private void validate(final ForAuthTodoDTO.TodoReq todoReq) {
         if (todoReq == null) {
             log.warn("TodoRequestDTO cannot be null.");
             throw new RuntimeException("TodoRequestDTO cannot be null.");

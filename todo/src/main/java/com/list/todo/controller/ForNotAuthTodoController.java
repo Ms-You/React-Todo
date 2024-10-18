@@ -1,20 +1,21 @@
 package com.list.todo.controller;
 
 import com.list.todo.config.global.ResponseDTO;
-import com.list.todo.domain.dto.TodoDTO;
-import com.list.todo.service.TodoService;
+import com.list.todo.domain.dto.ForNotAuthTodoDTO;
+import com.list.todo.service.ForNotAuthTodoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RequiredArgsConstructor
 @RequestMapping("/todo")
 @RestController
-public class TodoController {
-    private final TodoService todoService;
+public class ForNotAuthTodoController {
+    private final ForNotAuthTodoService forNotAuthTodoService;
 
     /**
      * 새로운 항목 추가
@@ -22,8 +23,8 @@ public class TodoController {
      * @return
      */
     @PostMapping
-    public ResponseEntity<?> createTodo(@RequestBody TodoDTO.TodoReq todoReq) {
-        List<TodoDTO.TodoResp> todoRespList = todoService.create(todoReq);
+    public ResponseEntity<?> createTodo(@RequestBody ForNotAuthTodoDTO.ForNotAuthTodoReq todoReq) {
+        List<ForNotAuthTodoDTO.ForNotAuthTodoResp> todoRespList = forNotAuthTodoService.create(todoReq);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "항목이 추가되었습니다.", todoRespList));
     }
@@ -34,7 +35,7 @@ public class TodoController {
      */
     @GetMapping
     public ResponseEntity<?> retrieveTodoList() {
-        List<TodoDTO.TodoResp> todoRespList = todoService.retrieve();
+        List<ForNotAuthTodoDTO.ForNotAuthTodoResp> todoRespList = forNotAuthTodoService.retrieve();
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "투두 리스트를 조회합니다.", todoRespList));
     }
@@ -46,15 +47,20 @@ public class TodoController {
      * @return
      */
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateTodo(@PathVariable(name = "id") Long id, @RequestBody TodoDTO.TodoReq todoReq) {
-        todoService.update(id, todoReq);
+    public ResponseEntity<?> updateTodo(@PathVariable(name = "id") UUID id, @RequestBody ForNotAuthTodoDTO.ForNotAuthTodoReq todoReq) {
+        forNotAuthTodoService.update(id, todoReq);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "성공적으로 수정되었습니다."));
     }
 
+    /**
+     * 항목 삭제
+     * @param id
+     * @return
+     */
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTodo(@PathVariable(name = "id") Long id) {
-        todoService.delete(id);
+    public ResponseEntity<?> deleteTodo(@PathVariable(name = "id") UUID id) {
+        forNotAuthTodoService.delete(id);
 
         return ResponseEntity.ok(new ResponseDTO(HttpStatus.OK.value(), "성공적으로 삭제되었습니다."));
     }

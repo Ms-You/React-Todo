@@ -16,9 +16,10 @@ import ForgotPassword from './ForgotPassword';
 import { SitemarkIcon } from './CustomIcons';
 import AppTheme from '../shared-theme/AppTheme';
 import ColorModeSelect from '../shared-theme/ColorModeSelect';
-import { call } from '../../service/ApiService';
-import { saveToken } from '../../service/localStorageUtils';
 import { useNavigate } from 'react-router-dom';
+import instance from '../../service/Interceptor';
+import { authState } from '../../store/atom';
+import { useSetRecoilState } from 'recoil';
 
 const Card = styled(MuiCard)(({ theme }) => ({
   display: 'flex',
@@ -73,6 +74,7 @@ export default function SignIn(props) {
     password: '',
   });
 
+  const setIsAuth = useSetRecoilState(authState);
   const navigate = useNavigate();
 
   const handleClickOpen = () => {
@@ -126,13 +128,14 @@ export default function SignIn(props) {
     }
 
     try {
-      const responseData = await call('/sign-in', 'POST', loginReq);
+      const responseData = await instance.post('/sign-in', loginReq);
 
-      const bearerToken = responseData.response.headers.get('Authorization');
+      const bearerToken = responseData.headers.get('Authorization');
       const accessToken = bearerToken ? bearerToken.split(' ')[1] : null;
       
       if (accessToken) {
-        saveToken(accessToken);
+        localStorage.setItem('accessToken', accessToken);
+        setIsAuth({ isAuthenticated: true });
         window.alert(responseData.data.message);
         navigate('/');
       } else {
@@ -141,7 +144,9 @@ export default function SignIn(props) {
 
     } catch (error) {
       console.log('Error occured when you login: ', error);
-      window.alert(error.message);
+      
+      const errorMessage = error.response?.data?.message || '존재하지 않는 회원 정보입니다.';
+      window.alert(errorMessage);
     }
   };
 
@@ -211,7 +216,6 @@ export default function SignIn(props) {
                 type="password"
                 id="password"
                 autoComplete="current-password"
-                autoFocus
                 required
                 fullWidth
                 variant="outlined"
